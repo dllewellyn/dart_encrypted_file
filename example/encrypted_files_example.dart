@@ -3,7 +3,7 @@ import 'dart:io';
 
 void main() async {
   
-  EncryptedFile(File('temp/abc.encrypted'), 'password')
+  await EncryptedFile(File('temp/abc.encrypted'), 'password')
   .writeAsString('test');
 
 print(await EncryptedFile(File('temp/abc.encrypted'), 'password')

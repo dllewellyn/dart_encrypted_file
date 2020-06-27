@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cryptography/cryptography.dart';
+import 'package:encrypt/encrypt.dart';
 
 
 class Awesome {
@@ -108,21 +109,16 @@ class EncryptedFile extends FileSystemEntity implements File {
     Future<Uint8List> readAsBytes() async {
 
       final bytes  = await file.readAsBytes();
-      final cipher = CipherWithAppendedMac(aesCtr, Hmac(sha256));
       final keyNonce = Nonce(bytes.sublist(0, 16));
       
-      final secretKey = SecretKey(await _createKey(keyNonce));
+      final key = Key(await _createKey(keyNonce));
       final nonce = Nonce(bytes.sublist(16,28));
       final message = bytes.sublist(28, bytes.length);
-    
-      // Encrypt
-      final decrypted = await cipher.decrypt(
-        message,
-        secretKey: secretKey,
-        nonce: nonce,
-      );
-
-      return decrypted;
+  
+      final encrypter = Encrypter(AES(key, mode: AESMode.ctr));
+      final decrypted = encrypter.decryptBytes(Encrypted(message), iv: IV(nonce.bytes));
+  
+      return Uint8List.fromList(decrypted);
     }
   
     @override
@@ -212,29 +208,21 @@ class EncryptedFile extends FileSystemEntity implements File {
 
     @override
     Future<File> writeAsBytes(List<int> bytes, {FileMode mode = FileMode.write, bool flush = false}) async {
-       final cipher = CipherWithAppendedMac(aesCtr, Hmac(sha256));
-
       final keyNonce = Nonce.randomBytes(16);
-      final secretKey = SecretKey(await _createKey(keyNonce));
+      final key = Key(await _createKey(keyNonce));
+      final encrypter = Encrypter(AES(key, mode: AESMode.ctr));
 
       final nonce = Nonce.randomBytes(12);
-
-
-      // Encrypt
-      final encrypted = await cipher.encrypt(
-        bytes,
-        secretKey: secretKey,
-        nonce: nonce,
-      );
+      final encrypted = encrypter.encryptBytes(bytes, iv: IV(nonce.bytes));
 
       final fileContents = <int>[];
 
       fileContents
         ..addAll(keyNonce.bytes)
         ..addAll(nonce.bytes)
-        ..addAll(encrypted);
+        ..addAll(encrypted.bytes);
   
-  return file.writeAsBytes(bytes, mode: mode, flush: flush);
+      return file.writeAsBytes(fileContents, mode: mode, flush: flush);
     }
   
     @override
