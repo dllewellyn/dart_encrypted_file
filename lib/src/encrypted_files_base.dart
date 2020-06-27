@@ -23,7 +23,7 @@ class EncryptedFile extends FileSystemEntity implements File {
   EncryptedFile(this.file, this.password);
 
   @override
-  File get absolute => throw UnimplementedError();
+  File get absolute => file.absolute;
 
   @override
   Future<File> copy(String newPath) {
@@ -97,27 +97,7 @@ class EncryptedFile extends FileSystemEntity implements File {
     int lengthSync() {
       return lengthSync();
     }
-  
-    @override
-    Future<RandomAccessFile> open({FileMode mode = FileMode.read}) {
-      return file.open(mode: mode);
-    }
-  
-    @override
-    Stream<List<int>> openRead([int start, int end]) {
-      return file.openRead(start, end);
-    }
-  
-    @override
-    RandomAccessFile openSync({FileMode mode = FileMode.read}) {
-      return file.openSync(mode: mode);
-    }
-  
-    @override
-    IOSink openWrite({FileMode mode = FileMode.write, Encoding encoding = utf8}) {
-      return file.openWrite(mode: mode, encoding: encoding);
-    }
-  
+    
     @override
     Directory get parent => file.parent;
   
@@ -144,18 +124,6 @@ class EncryptedFile extends FileSystemEntity implements File {
 
       return decrypted;
     }
-  
-    @override
-    Uint8List readAsBytesSync() {
-      return file.readAsBytesSync();
-    }
-  
-  
-    @override
-    Future<String> readAsString({Encoding encoding = utf8}) async {
-      return utf8.decode(await readAsBytes());
-    }
-  
   
     @override
     Future<File> rename(String newPath) {
@@ -218,32 +186,10 @@ class EncryptedFile extends FileSystemEntity implements File {
   
     @override
     Future<File> writeAsString(String contents, {FileMode mode = FileMode.write, Encoding encoding = utf8, bool flush = false}) async {
-      final cipher = CipherWithAppendedMac(aesCtr, Hmac(sha256));
-
-      final keyNonce = Nonce.randomBytes(16);
-      final secretKey = SecretKey(await _createKey(keyNonce));
-
-      final nonce = Nonce.randomBytes(12);
-
+    
       // Our message
       final message = utf8.encode(contents);
-
-      // Encrypt
-      final encrypted = await cipher.encrypt(
-        message,
-        secretKey: secretKey,
-        nonce: nonce,
-      );
-
-      print("Enc ${nonce}");
-      final fileContents = <int>[];
-
-      fileContents
-        ..addAll(keyNonce.bytes)
-        ..addAll(nonce.bytes)
-        ..addAll(encrypted);
-  
-      return file.writeAsBytes(fileContents, mode: mode, flush: flush);
+      return writeAsBytes(message, mode: mode, flush: flush);
     }
   
     @override
@@ -264,30 +210,81 @@ class EncryptedFile extends FileSystemEntity implements File {
       );
   }
 
-
     @override
-    Future<File> writeAsBytes(List<int> bytes, {FileMode mode = FileMode.write, bool flush = false}) {
-      // TODO: implement writeAsBytes
-      throw UnimplementedError();
+    Future<File> writeAsBytes(List<int> bytes, {FileMode mode = FileMode.write, bool flush = false}) async {
+       final cipher = CipherWithAppendedMac(aesCtr, Hmac(sha256));
+
+      final keyNonce = Nonce.randomBytes(16);
+      final secretKey = SecretKey(await _createKey(keyNonce));
+
+      final nonce = Nonce.randomBytes(12);
+
+
+      // Encrypt
+      final encrypted = await cipher.encrypt(
+        bytes,
+        secretKey: secretKey,
+        nonce: nonce,
+      );
+
+      final fileContents = <int>[];
+
+      fileContents
+        ..addAll(keyNonce.bytes)
+        ..addAll(nonce.bytes)
+        ..addAll(encrypted);
+  
+  return file.writeAsBytes(bytes, mode: mode, flush: flush);
     }
   
     @override
     void writeAsBytesSync(List<int> bytes, {FileMode mode = FileMode.write, bool flush = false}) {
       // TODO: implement writeAsBytesSync
     }
-    
+
   @override
-    Future<List<String>> readAsLines({Encoding encoding = utf8}) {
-      // TODO
+    Future<List<String>> readAsLines({Encoding encoding = utf8}) async {
+      return (await readAsString(encoding: encoding)).split('\n');
     }
   
     @override
     List<String> readAsLinesSync({Encoding encoding = utf8}) {
-      // TODO
+      return readAsStringSync(encoding: encoding)
+      .split('\n');
     }
     @override
     String readAsStringSync({Encoding encoding = utf8}) {
       // TODO
+    }
+  
+  @override
+    Future<RandomAccessFile> open({FileMode mode = FileMode.read}) {
+      // TODO
+    }
+  
+    @override
+    Stream<List<int>> openRead([int start, int end]) {
+      // TODO 
+    }
+  
+    @override
+    RandomAccessFile openSync({FileMode mode = FileMode.read}) {
+      // TODO
+    }
+  
+    @override
+    IOSink openWrite({FileMode mode = FileMode.write, Encoding encoding = utf8}) {
+      return file.openWrite(mode: mode, encoding: encoding);
+    }
+    @override
+    Uint8List readAsBytesSync() {
+      return file.readAsBytesSync();
+    }
+  
+  
+    @override
+    Future<String> readAsString({Encoding encoding = utf8}) async {
+      return utf8.decode(await readAsBytes());
     }
   
 }
