@@ -52,59 +52,50 @@ class EncryptedFile extends FileSystemEntity implements File {
   
     @override
     void deleteSync({bool recursive = false}) {
-      // TODO: implement deleteSync
+      return file.deleteSync(recursive: recursive);
     }
   
     @override
     Future<bool> exists() {
-      // TODO: implement exists
-      throw UnimplementedError();
+      return file.exists();
     }
   
     @override
     bool existsSync() {
-      // TODO: implement existsSync
-      throw UnimplementedError();
+      return file.existsSync();
     }
   
     @override
-    // TODO: implement isAbsolute
-    bool get isAbsolute => throw UnimplementedError();
+    bool get isAbsolute => file.isAbsolute;
   
     @override
     Future<DateTime> lastAccessed() {
-      // TODO: implement lastAccessed
-      throw UnimplementedError();
+      return file.lastAccessed();
     }
   
     @override
     DateTime lastAccessedSync() {
-      // TODO: implement lastAccessedSync
-      throw UnimplementedError();
+      return file.lastAccessedSync();
     }
   
     @override
     Future<DateTime> lastModified() {
-      // TODO: implement lastModified
-      throw UnimplementedError();
+      return file.lastModified();
     }
   
     @override
     DateTime lastModifiedSync() {
-      // TODO: implement lastModifiedSync
-      throw UnimplementedError();
+      return file.lastModifiedSync();
     }
   
     @override
     Future<int> length() {
-      // TODO: implement length
-      throw UnimplementedError();
+      return file.length();
     }
   
     @override
     int lengthSync() {
-      // TODO: implement lengthSync
-      throw UnimplementedError();
+      return lengthSync();
     }
   
     @override
@@ -114,14 +105,12 @@ class EncryptedFile extends FileSystemEntity implements File {
   
     @override
     Stream<List<int>> openRead([int start, int end]) {
-      // TODO: implement openRead
-      throw UnimplementedError();
+      return file.openRead(start, end);
     }
   
     @override
     RandomAccessFile openSync({FileMode mode = FileMode.read}) {
-      // TODO: implement openSync
-      throw UnimplementedError();
+      return file.openSync(mode: mode);
     }
   
     @override
@@ -130,12 +119,10 @@ class EncryptedFile extends FileSystemEntity implements File {
     }
   
     @override
-    // TODO: implement parent
-    Directory get parent => throw UnimplementedError();
+    Directory get parent => file.parent;
   
     @override
-    // TODO: implement path
-    String get path => throw UnimplementedError();
+    String get path => file.path;
   
     @override
     Future<Uint8List> readAsBytes() async {
@@ -160,111 +147,74 @@ class EncryptedFile extends FileSystemEntity implements File {
   
     @override
     Uint8List readAsBytesSync() {
-      // TODO: implement readAsBytesSync
-      throw UnimplementedError();
+      return file.readAsBytesSync();
     }
   
-    @override
-    Future<List<String>> readAsLines({Encoding encoding = utf8}) {
-      // TODO: implement readAsLines
-      throw UnimplementedError();
-    }
-  
-    @override
-    List<String> readAsLinesSync({Encoding encoding = utf8}) {
-      // TODO: implement readAsLinesSync
-      throw UnimplementedError();
-    }
   
     @override
     Future<String> readAsString({Encoding encoding = utf8}) async {
       return utf8.decode(await readAsBytes());
     }
   
-    @override
-    String readAsStringSync({Encoding encoding = utf8}) {
-      // TODO: implement readAsStringSync
-      throw UnimplementedError();
-    }
   
     @override
     Future<File> rename(String newPath) {
-      // TODO: implement rename
-      throw UnimplementedError();
+      return file.rename(newPath);
     }
   
     @override
     File renameSync(String newPath) {
-      // TODO: implement renameSync
-      throw UnimplementedError();
+      return file.renameSync(newPath);
     }
   
     @override
     Future<String> resolveSymbolicLinks() {
-      // TODO: implement resolveSymbolicLinks
-      throw UnimplementedError();
+      return file.resolveSymbolicLinks();
     }
   
     @override
     String resolveSymbolicLinksSync() {
-      // TODO: implement resolveSymbolicLinksSync
-      throw UnimplementedError();
+      return file.resolveSymbolicLinksSync();
     }
   
     @override
     Future setLastAccessed(DateTime time) {
-      // TODO: implement setLastAccessed
-      throw UnimplementedError();
+      return file.setLastAccessed(time);
     }
   
     @override
     void setLastAccessedSync(DateTime time) {
-      // TODO: implement setLastAccessedSync
+      return file.setLastAccessedSync(time);
     }
   
     @override
     Future setLastModified(DateTime time) {
-      // TODO: implement setLastModified
-      throw UnimplementedError();
+      return file.setLastModified(time);
     }
   
     @override
     void setLastModifiedSync(DateTime time) {
-      // TODO: implement setLastModifiedSync
+      file.setLastAccessedSync(time);
     }
   
     @override
     Future<FileStat> stat() {
-      // TODO: implement stat
-      throw UnimplementedError();
+      return file.stat();
     }
   
     @override
     FileStat statSync() {
-      // TODO: implement statSync
-      throw UnimplementedError();
+      return file.statSync();
     }
   
     @override
-    // TODO: implement uri
-    Uri get uri => throw UnimplementedError();
+    Uri get uri => file.uri;
   
     @override
     Stream<FileSystemEvent> watch({int events = FileSystemEvent.all, bool recursive = false}) {
-      // TODO: implement watch
-      throw UnimplementedError();
+      return file.watch(events: events, recursive: recursive);
     }
   
-    @override
-    Future<File> writeAsBytes(List<int> bytes, {FileMode mode = FileMode.write, bool flush = false}) {
-      // TODO: implement writeAsBytes
-      throw UnimplementedError();
-    }
-  
-    @override
-    void writeAsBytesSync(List<int> bytes, {FileMode mode = FileMode.write, bool flush = false}) {
-      // TODO: implement writeAsBytesSync
-    }
   
     @override
     Future<File> writeAsString(String contents, {FileMode mode = FileMode.write, Encoding encoding = utf8, bool flush = false}) async {
@@ -314,4 +264,30 @@ class EncryptedFile extends FileSystemEntity implements File {
       );
   }
 
+
+    @override
+    Future<File> writeAsBytes(List<int> bytes, {FileMode mode = FileMode.write, bool flush = false}) {
+      // TODO: implement writeAsBytes
+      throw UnimplementedError();
+    }
+  
+    @override
+    void writeAsBytesSync(List<int> bytes, {FileMode mode = FileMode.write, bool flush = false}) {
+      // TODO: implement writeAsBytesSync
+    }
+    
+  @override
+    Future<List<String>> readAsLines({Encoding encoding = utf8}) {
+      // TODO
+    }
+  
+    @override
+    List<String> readAsLinesSync({Encoding encoding = utf8}) {
+      // TODO
+    }
+    @override
+    String readAsStringSync({Encoding encoding = utf8}) {
+      // TODO
+    }
+  
 }
